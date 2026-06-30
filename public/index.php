@@ -29,6 +29,15 @@ $app->booted(function () {
         if (!file_exists($dbPath)) {
             @mkdir(dirname($dbPath), 0755, true);
             @touch($dbPath);
+            
+            // Otomatis jalankan migrasi tabel saat database pertama kali dibuat
+            try {
+                \Illuminate\Support\Facades\Artisan::call('migrate', [
+                    '--force' => true,
+                ]);
+            } catch (\Exception $e) {
+                // Dilewati agar aplikasi tidak crash jika ada kendala sistem
+            }
         }
     }
 });
