@@ -17,11 +17,20 @@ require __DIR__.'/../vendor/autoload.php';
 /** @var Application $app */
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-// Tambahan khusus untuk serverless Vercel agar bisa menulis cache dan views ke folder /tmp
+// Tambahan khusus untuk serverless Vercel
 $app->booted(function () {
     config(['view.compiled' => '/tmp/storage/framework/views']);
     config(['cache.stores.file.path' => '/tmp/storage/framework/cache/data']);
     config(['session.files' => '/tmp/storage/framework/sessions']);
+    
+    // Otomatis buat file database SQLite di /tmp jika belum ada
+    if (config('database.default') === 'sqlite') {
+        $dbPath = config('database.connections.sqlite.database');
+        if (!file_exists($dbPath)) {
+            @mkdir(dirname($dbPath), 0755, true);
+            @touch($dbPath);
+        }
+    }
 });
 
 $app->handleRequest(Request::capture());
