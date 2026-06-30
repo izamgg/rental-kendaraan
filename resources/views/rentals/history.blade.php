@@ -20,6 +20,21 @@
     </x-slot>
 
     <div class="w-full pt-2 pb-12">
+        <!-- ==================== NOTIFIKASI PEMBATALAN ==================== -->
+        @if(session('success'))
+            <div id="success-alert" class="mb-6 max-w-xl mx-auto flex items-start gap-4 p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 shadow-xl transition-all duration-300">
+                <div class="flex items-center justify-center p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-md">
+                    ✓
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm text-emerald-300">{{ session('success') }}</p>
+                </div>
+                <button type="button" onclick="document.getElementById('success-alert').remove()" class="text-gray-500 hover:text-white transition text-xs p-1">
+                    ✕
+                </button>
+            </div>
+        @endif
+
         @if($rentals->count() == 0)
             <div class="max-w-md mx-auto text-center bg-gray-900/50 border border-gray-800/80 rounded-2xl p-8 shadow-xl mt-6">
                 <div class="text-5xl mb-4">📋</div>
@@ -31,7 +46,9 @@
                     Sewa Kendaraan Sekarang
                 </a>
             </div>
-        @else
+        @endif
+
+        @if($rentals->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @foreach($rentals as $r)
                     <div class="group bg-gradient-to-br from-gray-900 via-gray-900 to-gray-950 border border-gray-800/80 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col sm:flex-row justify-between gap-6 hover:border-purple-500/30 transition-all duration-300">
@@ -83,6 +100,19 @@
                                     </span>
                                 </div>
 
+                                <!-- TOMBOL BATAL (HANYA MUNCUL JIKA PENDING) -->
+                                @if($r->status == 'pending')
+                                    <div class="pt-3">
+                                        <form action="/rent/{{ $r->id }}/cancel" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan penyewaan armada ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 hover:bg-red-500 hover:text-white transition duration-150">
+                                                🛑 Batal Sewa
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
+
                             </div>
                         </div>
 
@@ -110,3 +140,15 @@
         @endif
     </div>
 </x-app-layout>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// Efek auto-hide notifikasi sukses pembatalan setelah 5 detik
+if ($('#success-alert').length > 0) {
+    setTimeout(function() {
+        $('#success-alert').fadeOut(500, function() {
+            $(this).remove();
+        });
+    }, 5000);
+}
+</script>

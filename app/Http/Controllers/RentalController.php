@@ -67,6 +67,26 @@ class RentalController extends Controller
     }
 
     // =====================
+    // USER - CANCEL RENTAL
+    // =====================
+    public function cancel($id)
+    {
+        $rental = Rental::find($id);
+
+        if (!$rental) {
+            return back()->with('error', 'Data transaksi sewa tidak ditemukan.');
+        }
+
+        // Keamanan: pastikan data ini milik user yang login dan statusnya masih pending
+        if ($rental->user_id == Auth::id() && $rental->status == 'pending') {
+            $rental->delete();
+            return back()->with('success', 'Penyewaan berhasil dibatalkan.');
+        }
+
+        return back()->with('error', 'Transaksi gagal dibatalkan karena sudah diproses.');
+    }
+
+    // =====================
     // ADMIN - LIST RENTAL
     // =====================
     public function admin()

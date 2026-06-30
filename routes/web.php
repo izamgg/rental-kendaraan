@@ -44,6 +44,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/rental', [RentalController::class, 'index'])->name('rental.index');
     Route::post('/rent', [RentalController::class, 'store'])->name('rental.store');
     Route::get('/my-rental', [RentalController::class, 'history'])->name('rental.history');
+    
+    // Fitur Batal Sewa (User Biasa)
+    Route::delete('/rent/{id}/cancel', [RentalController::class, 'cancel'])->name('rental.cancel');
 
     // AJAX
     Route::get('/calculate/{id}/{days}', [RentalController::class, 'calculate'])

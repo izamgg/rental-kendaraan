@@ -19,6 +19,23 @@
 
     <!-- Mengubah max-w agar muat grid card berdampingan -->
     <div class="max-w-5xl mx-auto pt-2 pb-12 px-4">
+
+        <!-- ==================== NOTIFIKASI BERHASIL SEWA ==================== -->
+        @if(session('success'))
+            <div id="success-alert" class="mb-5 flex items-start gap-4 p-5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 shadow-xl shadow-emerald-950/20 transition-all duration-300">
+                <div class="flex items-center justify-center p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-lg">
+                    🎉
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-bold text-white text-base">Pemesanan Berhasil!</h4>
+                    <p class="text-sm text-emerald-400/80 mt-0.5">{{ session('success') }}</p>
+                </div>
+                <button type="button" onclick="document.getElementById('success-alert').remove()" class="text-gray-500 hover:text-white transition text-sm p-1">
+                    ✕
+                </button>
+            </div>
+        @endif
+
         <div class="bg-gradient-to-b from-gray-900/90 to-gray-950 border border-gray-800/80 rounded-[24px] shadow-2xl overflow-hidden relative">
             <div class="h-1 bg-gradient-to-r from-emerald-500 to-cyan-500"></div>
 
@@ -131,6 +148,15 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+// Efek auto-hide/hilang otomatis notifikasi setelah 6 detik biar clean
+if ($('#success-alert').length > 0) {
+    setTimeout(function() {
+        $('#success-alert').fadeOut(500, function() {
+            $(this).remove();
+        });
+    }, 6000);
+}
+
 // Logic ketika salah satu card kendaraan diklik oleh customer
 $('.vehicle-card').on('click', function() {
     let selectedId = $(this).data('id');
@@ -146,7 +172,7 @@ $('.vehicle-card').on('click', function() {
     $(this).find('.checkbox-indicator').removeClass('border-gray-800 text-transparent').addClass('bg-emerald-500 text-gray-950 border-emerald-500');
 });
 
-// Fungsi AJAX hitung otomatis bawaan Anda (tetap dipertahankan tanpa diubah fungsinya)
+// Fungsi AJAX hitung otomatis bawaan Anda
 $('#vehicle, #days').on('change keyup', function() {
     let id = $('#vehicle').val();
     let days = $('#days').val();
