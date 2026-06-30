@@ -17,4 +17,11 @@ require __DIR__.'/../vendor/autoload.php';
 /** @var Application $app */
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
+// Tambahan khusus untuk serverless Vercel agar bisa menulis cache dan views ke folder /tmp
+$app->booted(function () {
+    config(['view.compiled' => '/tmp/storage/framework/views']);
+    config(['cache.stores.file.path' => '/tmp/storage/framework/cache/data']);
+    config(['session.files' => '/tmp/storage/framework/sessions']);
+});
+
 $app->handleRequest(Request::capture());
